@@ -1,0 +1,14 @@
+This is a search log query engine which runs on Elasticsearch and flask stack.
+
+The only requirement is to have docker-engine installed.
+
+After downloading the zip:
+
+1. Unzip the repository.
+
+1. Go inside the search-log-engine folder.
+
+2. Run Command: source ./start.sh
+
+3. After server starts running go to :  0.0.0.0:5000
+

@@ -1,0 +1,89 @@
+curl -X PUT "192.168.0.105:9200/sr" -H 'Content-Type: application/json' -d'
+{
+    "settings" : {
+        "number_of_shards" : 2,
+        "number_of_replicas" : 2
+    },
+    "mappings":{
+        "_doc":{
+            "dynamic": false,
+            "properties":{
+                "search_term":{
+                    "type":"text",
+                    "analyzer":"keyword",
+                    "search_analyzer": "keyword"
+                }
+            }
+        }
+    }
+}
+'
+
+
+
+curl -X DELETE "localhost:9200/sr"
+
+
+curl -X POST "localhost:9200/sr/_doc/" -H 'Content-Type: application/json' -d'
+{
+    "search_term":"Biomolecules"
+}
+'
+
+
+curl -X GET "localhost:9200/sr/_doc/1"
+
+
+curl -X GET "localhost:9200/sr/_search?q=search_term:Bio"
+
+
+curl -X GET \
+  http://localhost:9200/sr/_search \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: acfa046c-d9d6-439d-b60d-af4d436b86fc' \
+  -H 'cache-control: no-cache' \
+  -d '{
+    "query": {
+        "fuzzy": {
+            "search_term": {
+                "value": "bIOMOlecule",
+                "fuzziness": 6
+            }
+        }
+    }
+}'
+
+curl -X POST "localhost:9200/_analyze" -H 'Content-Type: application/json' -d'
+{
+  "analyzer": "standard",
+  "text": "Biomolecules"
+}
+'
+
+
+
+### 3. Get Python, PIP
+
+RUN apk add --no-cache python3 musl-dev linux-headers g++ \
+&& python3 -m ensurepip \
+&& pip3 install --upgrade pip setuptools \
+&& rm -r /usr/lib/python*/ensurepip && \
+if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
+if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
+rm -r /root/.cache
+
+### Get Flask for the app
+#RUN pip install --trusted-host pypi.python.org flask
+
+
+COPY  src /app
+
+
+# Create app directory
+#WORKDIR /
+
+#RUN /elasticsearch-6.6.0/bin/elasticsearch
+
+
+
+
